@@ -48,6 +48,23 @@ app.post("/api/notes", (req, res) => {
   });
 });
 
+app.delete("/api/notes/:id", (req, res) => {
+  fs.readFile("./db/db.json", (err, data) => {
+    const notes = JSON.parse(data);
+    if (err) {
+      console.error(err);
+    } else {
+      const filterNotes = notes.filter((note) => {
+        return note.id !== req.params.id;
+      });
+      console.log(filterNotes);
+      fs.writeFile("./db/db.json", JSON.stringify(filterNotes), (err) =>
+        err ? console.error(err) : res.json(notes)
+      );
+    }
+  });
+});
+
 app.listen(PORT, () =>
   console.log(`Example app listening at http://localhost:${PORT}`)
 );
