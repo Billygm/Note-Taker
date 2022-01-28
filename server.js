@@ -26,6 +26,28 @@ app.get("/api/notes", (req, res) => {
   });
 });
 
+app.post("/api/notes", (req, res) => {
+  const { title, text } = req.body;
+  const newNote = {
+    title,
+    text,
+    id: uuid.v4(),
+  };
+
+  fs.readFile("./db/db.json", (err, data) => {
+    const notes = JSON.parse(data);
+    if (err) {
+      console.error(err);
+    } else {
+      notes.push(newNote);
+      const noteString = JSON.stringify(notes, null, 4);
+      fs.writeFile("./db/db.json", noteString, (err) =>
+        err ? console.error(err) : res.json(newNote)
+      );
+    }
+  });
+});
+
 app.listen(PORT, () =>
   console.log(`Example app listening at http://localhost:${PORT}`)
 );
